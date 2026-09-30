@@ -16,7 +16,10 @@ RSpec.describe IcalFilterProxy::CalendarBuilder do
       'alarms' => {
         'clear_existing' => true,
         'triggers'=> [ '10 days' ]
-      }
+      },
+      'extra_events' => [
+        { 'summary' => 'No School', 'date' => '2027-01-04', 'end_date' => Date.new(2027, 1, 5) }
+      ]
     }
   end
 
@@ -46,6 +49,12 @@ RSpec.describe IcalFilterProxy::CalendarBuilder do
 
     it 'sets clear alarms flag on the Calendar object' do
       expect(calendar.clear_existing_alarms).to eq(true)
+    end
+
+    it 'adds extra events to the Calendar object' do
+      expect(calendar.extra_events).to eq([
+        { summary: 'No School', start_date: Date.new(2027, 1, 4), last_date: Date.new(2027, 1, 5), description: nil }
+      ])
     end
 
     it 'adds alarm triggers to the Calendar object' do

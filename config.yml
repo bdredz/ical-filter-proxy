@@ -1,6 +1,7 @@
-# Gwinnett County Public Schools: school-operations events only.
+# Gwinnett County Public Schools: school-specific events only.
 # Allowlist: an event is kept only if its SUMMARY matches one of these patterns.
-# Holidays/breaks, board meetings, observances and awareness months are dropped.
+# General holidays (Labor Day, MLK, Memorial Day, Christmas Day...), board meetings,
+# observances and awareness months are dropped; school breaks are kept.
 gwinnett-school:
   ical_url: https://www.gcpsk12.org/fs/calendar-manager/events.ics?calendar_ids=1
   timezone: America/New_York
@@ -13,3 +14,11 @@ gwinnett-school:
         - '/^\s*Digital Learning Day/i'
         - '/\b(1st|2nd|First|Second) Semester\b/i'
         - '/Pre-?planning|Post-?planning|Teacher Planning|Staff Development/i'
+        - '/\(School Holidays?\)/i'
+        - '/^\s*Spring Break/i'
+        - '/^\s*100th Day of School/i'
+  # Dates on the official 2026-27 GCPS calendar PDF that the district feed omits.
+  extra_events:
+    - summary: Teacher Planning/Staff Development (Student Holiday)
+      date: '2027-01-04'
+      description: 'No school for students. Source: GCPS 2026-27 school year calendar.'

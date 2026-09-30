@@ -1,6 +1,6 @@
 module IcalFilterProxy
   class Calendar
-    attr_accessor :ical_url, :api_key, :timezone, :filter_rules, :clear_existing_alarms, :alarm_triggers
+    attr_accessor :ical_url, :api_key, :timezone, :filter_rules, :clear_existing_alarms, :alarm_triggers, :extra_events
 
     def initialize(ical_url, api_key, timezone = 'UTC')
       self.ical_url = ical_url
@@ -10,6 +10,7 @@ module IcalFilterProxy
       self.filter_rules = []
       self.clear_existing_alarms = false
       self.alarm_triggers = []
+      self.extra_events = []
     end
 
     def add_rule(field, operator, value)
@@ -20,11 +21,21 @@ module IcalFilterProxy
       self.alarm_triggers << AlarmTrigger.new(alarm_trigger)
     end
 
+    # Adds an all-day event that is not in the source feed. It bypasses filter rules.
+    # end_date is inclusive and defaults to date.
+    def add_extra_event(summary, date, end_date = nil, description = nil)
+      start_date = Date.iso8601(date.to_s)
+      last_date = end_date ? Date.iso8601(end_date.to_s) : start_date
+      raise "extra event end_date is before date: #{summary}" if last_date < start_date
+
+      self.extra_events << { summary: summary, start_date: start_date, last_date: last_date, description: description }
+    end
+
     def filtered_calendar
       filtered_calendar = Icalendar::Calendar.new
 
-      filtered_events.each do |original_event|
-        filtered_calendar.add_event(original_event)
+      (filtered_events + built_extra_events).each do |event|
+        filtered_calendar.add_event(event)
       end
 
       filtered_calendar.events.select do |e|
@@ -46,6 +57,19 @@ module IcalFilterProxy
     def filtered_events
       original_ics.events.select do |e|
         filter_match?(FilterableEventAdapter.new(e, timezone: timezone))
+      end
+    end
+
+    # Built per render so alarms added below never accumulate across requests.
+    def built_extra_events
+      extra_events.map do |extra|
+        Icalendar::Event.new.tap do |e|
+          e.uid = "extra-#{Digest::SHA1.hexdigest("#{extra[:summary]}|#{extra[:start_date]}")}@ical-filter-proxy"
+          e.dtstart = Icalendar::Values::Date.new(extra[:start_date].strftime('%Y%m%d'))
+          e.dtend = Icalendar::Values::Date.new((extra[:last_date] + 1).strftime('%Y%m%d'))
+          e.summary = extra[:summary]
+          e.description = extra[:description] if extra[:description]
+        end
       end
     end
 

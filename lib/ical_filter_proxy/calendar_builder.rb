@@ -11,6 +11,7 @@ module IcalFilterProxy
       create_calendar
       add_rules
       add_alarms
+      add_extra_events
 
       calendar
     end
@@ -45,6 +46,18 @@ module IcalFilterProxy
 
       triggers.each do |trigger|
         calendar.add_alarm_trigger(trigger)
+      end
+    end
+
+    def add_extra_events
+      extra_events = calendar_config["extra_events"]
+      return unless extra_events
+
+      extra_events.each do |event|
+        calendar.add_extra_event(event["summary"],
+                                 event["date"],
+                                 event["end_date"],
+                                 event["description"])
       end
     end
 
