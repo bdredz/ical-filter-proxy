@@ -1,4 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null
+  "framework": null,
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/gwinnett-school.ics", "destination": "/api?calendar=gwinnett-school" }
+  ]
 }
