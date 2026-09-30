@@ -1,0 +1,15 @@
+# Gwinnett County Public Schools: school-operations events only.
+# Allowlist: an event is kept only if its SUMMARY matches one of these patterns.
+# Holidays/breaks, board meetings, observances and awareness months are dropped.
+gwinnett-school:
+  ical_url: https://www.gcpsk12.org/fs/calendar-manager/events.ics?calendar_ids=1
+  timezone: America/New_York
+  rules:
+    - field: summary
+      operator: matches
+      val:
+        - '/^\s*(First|Last) Day (of|for) (School|Students)/i'
+        - '/^\s*Early Release/i'
+        - '/^\s*Digital Learning Day/i'
+        - '/\b(1st|2nd|First|Second) Semester\b/i'
+        - '/Pre-?planning|Post-?planning|Teacher Planning|Staff Development/i'
