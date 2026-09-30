@@ -37,6 +37,11 @@ my_calendar_name:
      triggers: # (optional) triggers for new alarms. Description will be the alarm summary, action is 'DISPLAY'
        - '-P1DT0H0M0S' # iso8601 supported
        - 2 days # supports full day[s], hour[s], minute[s], no combination in one trigger
+   extra_events: # (optional) all-day events missing from the source, added after filtering
+     - summary: No School
+       date: '2027-01-04' # YYYY-MM-DD
+       end_date: '2027-01-05' # (optional) inclusive, defaults to date
+       description: Teacher planning day # (optional)
 ```
 
 ### Variable substitution

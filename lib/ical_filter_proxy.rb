@@ -5,6 +5,8 @@ require 'rack'
 require 'open-uri'
 require 'icalendar'
 require 'yaml'
+require 'date'
+require 'digest'
 require 'forwardable'
 require 'to_regexp'
 
@@ -26,7 +28,7 @@ module IcalFilterProxy
     content.gsub! /\${(ICAL_FILTER_PROXY_[^}]+)}/ do
       ENV[$1]
     end
-    YAML.safe_load(content)
+    YAML.safe_load(content, permitted_classes: [Date])
   end
 
   def self.config_file_path

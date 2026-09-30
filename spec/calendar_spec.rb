@@ -70,6 +70,34 @@ RSpec.describe IcalFilterProxy::Calendar do
         filtered_ical = cal.filtered_calendar
         expect(filtered_ical.gsub(/[\r\n]+/, "\n")).to eq(filtered_calendar_with_new_alarm.gsub(/[\r\n]+/, "\n"))
       end
+
+      it 'appends extra events as all-day events that bypass the filter_rules' do
+        cal.add_rule('summary', 'equals', 'no event has this summary')
+        cal.add_extra_event('No School', '2027-01-04', '2027-01-05', 'Student holiday')
+
+        events = Icalendar::Calendar.parse(cal.filtered_calendar).first.events
+        expect(events.length).to eq(1)
+        expect(events.first.summary).to eq('No School')
+        expect(events.first.description).to eq('Student holiday')
+        expect(events.first.dtstart).to eq(Date.new(2027, 1, 4))
+        expect(events.first.dtend).to eq(Date.new(2027, 1, 6))
+      end
+
+      it 'does not accumulate alarms on extra events across renders' do
+        cal.add_rule('summary', 'equals', 'no event has this summary')
+        cal.add_extra_event('No School', '2027-01-04')
+        cal.add_alarm_trigger('1 day')
+
+        cal.filtered_calendar
+        events = Icalendar::Calendar.parse(cal.filtered_calendar).first.events
+        expect(events.first.alarms.length).to eq(1)
+      end
+    end
+
+    describe '#add_extra_event' do
+      it 'rejects an end_date before the date' do
+        expect { cal.add_extra_event('Bad', '2027-01-04', '2027-01-03') }.to raise_error(/end_date is before date/)
+      end
     end
   end
 
