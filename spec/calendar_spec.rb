@@ -94,6 +94,19 @@ RSpec.describe IcalFilterProxy::Calendar do
       end
     end
 
+    describe 'name' do
+      before { stub_request(:get, url).to_return(body: original_calendar) }
+
+      it 'sets X-WR-CALNAME when a name is given' do
+        cal.name = 'Team Rota'
+        expect(cal.filtered_calendar).to include("X-WR-CALNAME:Team Rota\r\n")
+      end
+
+      it 'omits X-WR-CALNAME by default' do
+        expect(cal.filtered_calendar).not_to include('X-WR-CALNAME')
+      end
+    end
+
     describe '#add_extra_event' do
       it 'rejects an end_date before the date' do
         expect { cal.add_extra_event('Bad', '2027-01-04', '2027-01-03') }.to raise_error(/end_date is before date/)

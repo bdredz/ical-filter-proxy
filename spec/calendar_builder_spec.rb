@@ -10,6 +10,7 @@ RSpec.describe IcalFilterProxy::CalendarBuilder do
     {
       'ical_url' => 'https://url-to-calendar.ical',
       'api_key' => 'abc12',
+      'name' => 'Team Rota',
       'rules' => [
         { 'field' => 'start_time', 'operator' => 'equals', 'val' => '09:00' }
       ],
@@ -36,6 +37,10 @@ RSpec.describe IcalFilterProxy::CalendarBuilder do
 
     it 'adds api_key to the Calenar object' do
       expect(calendar.api_key).to eq('abc12')
+    end
+
+    it 'adds name to the Calendar object' do
+      expect(calendar.name).to eq('Team Rota')
     end
 
     it 'adds filter rules to the Calendar object' do

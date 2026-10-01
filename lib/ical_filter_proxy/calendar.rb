@@ -1,6 +1,6 @@
 module IcalFilterProxy
   class Calendar
-    attr_accessor :ical_url, :api_key, :timezone, :filter_rules, :clear_existing_alarms, :alarm_triggers, :extra_events
+    attr_accessor :ical_url, :api_key, :timezone, :filter_rules, :clear_existing_alarms, :alarm_triggers, :extra_events, :name
 
     def initialize(ical_url, api_key, timezone = 'UTC')
       self.ical_url = ical_url
@@ -33,6 +33,7 @@ module IcalFilterProxy
 
     def filtered_calendar
       filtered_calendar = Icalendar::Calendar.new
+      filtered_calendar.append_custom_property('X-WR-CALNAME', name) if name
 
       (filtered_events + built_extra_events).each do |event|
         filtered_calendar.add_event(event)

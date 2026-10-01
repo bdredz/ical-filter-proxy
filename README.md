@@ -15,6 +15,7 @@ In addition, display alarms can be created or cleared.
 my_calendar_name:
    ical_url: https://source-calendar.com/my_calendar.ics # Source calendar
    api_key: myapikey # (optional) append ?key=myapikey to your URL to grant access
+   name: My Calendar # (optional) calendar name shown by subscribing clients
    timezone: Europe/London # (optional) ensure all time comparisons are done in this TZ
    rules:
       - field: start_time # start_time and end_time supported
