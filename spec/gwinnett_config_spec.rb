@@ -45,6 +45,11 @@ RSpec.describe 'config.yml gwinnett-school calendar' do
     ].each { |s| expect(summaries).not_to include(s) }
   end
 
+  it 'names the calendar for subscribers' do
+    stub_request(:get, calendar.ical_url).to_return(body: fixture)
+    expect(calendar.filtered_calendar).to include("X-WR-CALNAME:Gwinnett 26-27 School Calendar")
+  end
+
   it 'gives the added Jan 4 event a stable all-day UID' do
     jan4 = events.find { |e| e.dtstart.to_date.to_s == '2027-01-04' }
     expect(jan4.dtstart).to be_a(Icalendar::Values::Date)
