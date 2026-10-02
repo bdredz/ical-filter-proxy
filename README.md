@@ -9,6 +9,40 @@ good to go.
 
 In addition, display alarms can be created or cleared.
 
+## Gwinnett School Calendar (this fork)
+
+This fork runs an unofficial, filtered Gwinnett County Public Schools calendar
+on Vercel. See [CHANGELOG.md](CHANGELOG.md) for releases.
+
+| What | Where |
+|------|-------|
+| Subscribe page (share this) | https://gcps-school-calendar.vercel.app |
+| Feed | https://gcps-school-calendar.vercel.app/gwinnett-school.ics |
+| Source feed | https://www.gcpsk12.org/fs/calendar-manager/events.ics?calendar_ids=1 |
+| Config | `gwinnett-school` in [`config.yml`](config.yml) |
+| Subscribe page source | [`public/index.html`](public/index.html) |
+
+**What it keeps:** school-specific dates: breaks, early release days, digital
+learning days, teacher planning days, first/last day, semester start/end and
+the 100th day. General holidays (Labor Day, MLK Day, Christmas Day...), board
+meetings and observances are dropped, since subscribers already have those.
+The filter is an allowlist on event titles, so new kinds of district noise
+never get through. `extra_events` adds dates the district feed leaves out.
+
+**Deployment:** the Vercel project `gcps-school-calendar` deploys every push
+to `master` to production automatically, so test changes before merging. Other
+branches get protected preview deployments.
+
+**Yearly update checklist** (when the next school-year PDF is published):
+
+1. Compare the PDF against the live feed (titles and date spans).
+2. Add any school dates missing from the district feed to `extra_events`, and
+   remove last year's entries.
+3. Update the year in `name`, the page `<title>`/heading and the fixture-based
+   spec (`spec/gwinnett_config_spec.rb`) with a fresh feed snapshot.
+4. Run `bundle exec rake`, add a CHANGELOG entry, bump the version, merge to
+   `master` and tag the release.
+
 ## Configuration
 
 ```yaml
@@ -90,6 +124,15 @@ Create a `config.yml` as shown above.
 docker build -t ical-filter-proxy .
 docker run -d --name ical-filter-proxy -v $(pwd)/config.yml:/app/config.yml -p 8000:8000 ical-filter-proxy
 ```
+
+### Vercel
+
+Commit your `config.yml` and import the repo as a Vercel project. `api/index.rb`
+runs on Vercel's Ruby runtime, and `vercel.json` limits static files to `public/`
+so the config and source aren't served. Calendars are available at
+`https://<project>.vercel.app/api?calendar=my_calendar_name&key=my_api_key`.
+Add a rewrite in `vercel.json` for a clean `.ics` URL. Note that Vercel
+Authentication protects preview deployments, so share the production domain.
 
 ### Lambda
 

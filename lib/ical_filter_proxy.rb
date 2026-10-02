@@ -10,6 +10,7 @@ require 'digest'
 require 'forwardable'
 require 'to_regexp'
 
+require_relative 'ical_filter_proxy/version'
 require_relative 'ical_filter_proxy/alarm_trigger'
 require_relative 'ical_filter_proxy/calendar'
 require_relative 'ical_filter_proxy/filter_rule'
