@@ -3,7 +3,7 @@
 # General holidays (Labor Day, MLK, Memorial Day, Christmas Day...), board meetings,
 # observances and awareness months are dropped; school breaks are kept.
 gwinnett-school:
-  name: Gwinnett 26-27 School Calendar
+  name: Gwinnett School Calendar 2026-27
   ical_url: https://www.gcpsk12.org/fs/calendar-manager/events.ics?calendar_ids=1
   timezone: America/New_York
   rules:
